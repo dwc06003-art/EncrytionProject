@@ -7,7 +7,6 @@ from fastapi.templating import Jinja2Templates
 from fastapi import Form
 from cipher_lib.caesar_cipher_v2 import caesar_cipher
 from cipher_lib.vigenere_cipher import vigenere_cipher
-from cipher_lib.playfare_cipher import
 
 # FastAPI 인스턴스 생성
 app = FastAPI()
