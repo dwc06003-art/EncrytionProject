@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>로그인 정보</h1>
+<p>아이디: {{ username }}</p>
+<p>비밀번호: {{ password }}</p>
+<hr>
+<p>시저암호화 결과: {{caesar_encrypted}}</p>ㄹ
+<p>비즈네르암호화 비밀번호 : {{vigenere_encrypted}}</p>
+
+<hr>
+{{ request.url }} <br/>
+{{ request.method }} <br/>
+{{ request.headers['content-type'] }} <br/>
+{{ request.headers['user-agent'] }} <br/>
+{% for key, avl in form.items() %}
+    <span>{{ key }} : {{ val }}</span>
+{% endfor %}
+<br/>
+
+</body>
+</html>
