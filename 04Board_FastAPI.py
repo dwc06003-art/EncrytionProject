@@ -36,7 +36,7 @@ templates = Jinja2Templates(directory="templates")
 async def index():
     return {"message": "Hello, World!"}
 
-
+# 게시판 리스트
 @app.get("/board", response_class=HTMLResponse)
 async def board_list(request: Request):
     async with aiosqlite.connect(DB_NAME) as db:
@@ -61,6 +61,21 @@ async def board_list(request: Request):
         "boards": boards
     })
 
+# 게시판 글쓰기 폼
+@app.get("/board/new", response_class=HTMLResponse)
+def board_new_form(request: Request):
+    return templates.TemplateResponse("board_new.html", {"request": request})
+
+# 게시판 글쓰기 처리
+@app.post("/board/new")
+async def board_new(title: str = Form(...), username: str = Form(...), contents: str = Form(...)):
+    async with aiosqlite.connect(DB_NAME) as db:
+        await db.execute(
+            "INSERT INTO board (title, username, contents) VALUES (?, ?, ?)",
+            (title, username, contents))
+        await db.commit()
+
+    return RedirectResponse(url="/board", status_code=303)
 
 # 스크립트를 직접 실행할 때만 서버 실행
 if __name__ == "__main__":
