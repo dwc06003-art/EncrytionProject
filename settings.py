@@ -3,5 +3,6 @@ from fastapi.templating import Jinja2Templates
 
 BoardDB_NAME = "board.db"
 MemberDB_NAME = "member.db"
+SungjukDB_NAME = "sungjuk.db"
 
 templates = Jinja2Templates(directory="templates")
