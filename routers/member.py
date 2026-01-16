@@ -65,6 +65,10 @@ async def member_list(request: Request):
 # 요청이 들어오면 로그인 폼을 보여줌
 @router.get("/login", response_class=HTMLResponse)
 async def login_form(request: Request):
+    # 이미 로그인 상태면 /board/list로 이동
+    if request.session.get("user"):
+        return RedirectResponse(url="/board/list", status_code=303)
+
     return templates.TemplateResponse("member/login.html", {"request": request})
 
 
@@ -82,6 +86,12 @@ async def login(request: Request, username: str = Form(...), password: str = For
             "request": request,
             "error": "아이디 또는 비밀번호가 올바르지 않습니다."
         })
+
+    # 세션에 저장(필요한 최소 정보만)
+    request.session["user"] = {
+        "username": member[0],
+        "name": member[1]
+    }
 
     # 조회한 데이터를 JSON형식으로 생성
     member = {
