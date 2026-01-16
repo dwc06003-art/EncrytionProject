@@ -17,7 +17,7 @@ async def sungjuk_list(request: Request):
     sungjuks = []
     for rs in results:
         sungjuk = {
-            "sjon": rs[0],
+            "sjno": rs[0],
             "name": rs[1],
             "kor": rs[2],
             "eng": rs[3],
@@ -33,13 +33,23 @@ async def sungjuk_list(request: Request):
 
 @router.get("/new", response_class=HTMLResponse)
 async def sungjuk_newform(request: Request):
-    pass
+    return templates.TemplateResponse("sungjuk/sungjuk_new.html", {"request": request})
 
 
 @router.post("/new", response_class=HTMLResponse)
 async def sungjuk_new(request: Request, name: str = Form(...),
         kor: int = Form(...), eng: int = Form(...), mat: int = Form(...)):
-    pass
+    # 성적 처리 (총점/평균/학점 계산)
+    tot, avg, grd = compute_sungjuk(kor, eng, mat)
+
+    async with aiosqlite.connect(SungjukDB_NAME) as db:
+        await db.execute(
+            "INSERT INTO sungjuk (name,kor,eng,mat,tot,avg,grd) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (name, kor, eng, mat, tot, avg, grd))
+        await db.commit()
+
+    return RedirectResponse(url="/sungjuk/list", status_code=303)
+
 
 
 @router.get("/{sjno}", response_class=HTMLResponse)
@@ -61,3 +71,14 @@ async def sungjuk_editform(request: Request, sjno: int):
 async def sungjuk_edit(request: Request, sjno: int,
     kor: int = Form(...), eng: int = Form(...), mat: int = Form(...)):
     pass
+
+
+def compute_sungjuk(kor, eng, mat):
+    tot = kor + eng + mat
+    avg = tot / 3
+    grd = ('A' if (avg >= 90) else
+           'B' if (avg >= 80) else
+           'C' if (avg >= 70) else
+           'D' if (avg >= 60) else 'F')
+
+    return tot, avg, grd
