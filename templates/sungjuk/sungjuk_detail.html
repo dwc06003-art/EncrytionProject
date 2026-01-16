@@ -22,7 +22,7 @@
 <hr />
 
 <a href="/sungjuk/list">목록</a> |
-<a href="/board/{{ sj['sjno'] }}/edit">수정</a>
+<a href="/sungjuk/{{ sj['sjno'] }}/edit">수정</a>
 
 <form method="post" action="/sungjuk/{{ sj['sjno'] }}/delete" style="display:inline;">
     <button type="submit" onclick="return confirm('정말 삭제할까요?');">삭제</button>
